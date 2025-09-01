@@ -1,0 +1,9 @@
+[package]
+name = "git-quick-add"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+console = "0.16.0"
+dialoguer = "0.12.0"
+git2 = "0.20.2"
