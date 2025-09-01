@@ -15,13 +15,7 @@ fn main() {
 
     let chosen = choose_files(paths);
 
-    let _ = git_add_selected(&repo, &chosen).unwrap_or_else(|_| {
+    git_add_selected(&repo, &chosen).unwrap_or_else(|_| {
         println!("{}", console::style("Failed to stage files").red())
     });
-
-    // println!(
-    //     "{}\n {}",
-    //     console::style("Staged paths:").bold(),
-    //     console::style(format!("- {}", &chosen.join("\n - "))).green()
-    // );
 }
