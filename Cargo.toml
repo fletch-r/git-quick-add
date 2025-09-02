@@ -7,3 +7,7 @@ edition = "2024"
 console = "0.16.0"
 dialoguer = "0.12.0"
 git2 = "0.20.2"
+
+[[bin]]
+name = "qa"          # this is the command name people will run
+path = "src/main.rs"
