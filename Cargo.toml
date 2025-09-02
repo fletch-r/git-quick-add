@@ -7,7 +7,7 @@ description = "Quickly add your files with the command `qa` using the interactiv
 readme = "README.md"
 repository = "https://github.com/fletch-r/git-quick-add"
 license = "MIT"
-keywords = ["git", "commits", "git add", "cli"]
+keywords = ["git", "commits", "add", "git-add", "cli"]
 
 [dependencies]
 console = "0.16.0"
