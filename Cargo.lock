@@ -111,6 +111,7 @@ dependencies = [
  "console",
  "dialoguer",
  "git2",
+ "tempfile",
 ]
 
 [[package]]

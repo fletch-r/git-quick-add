@@ -13,6 +13,7 @@ keywords = ["git", "commits", "add", "git-add", "cli"]
 console = "0.16.0"
 dialoguer = "0.12.0"
 git2 = "0.20.2"
+tempfile = "3.21.0"
 
 [[bin]]
 name = "qa"          # this is the command name people will run
