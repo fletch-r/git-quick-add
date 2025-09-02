@@ -2,6 +2,12 @@
 name = "git-quick-add"
 version = "0.1.0"
 edition = "2024"
+authors = ["Andrew Fletcher"]
+description = "Quickly add your files with the command `qa` using the interactive terminal."
+readme = "README.md"
+repository = "https://github.com/fletch-r/git-quick-add"
+license = "MIT"
+keywords = ["git", "conventional commits", "git add", "cli"]
 
 [dependencies]
 console = "0.16.0"
