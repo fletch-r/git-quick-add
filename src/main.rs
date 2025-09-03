@@ -1,6 +1,6 @@
-use std::process;
-use git2::Repository;
 use git_quick_add::{choose_files, get_paths, git_add_selected};
+use git2::Repository;
+use std::process;
 
 fn main() {
     let repo = Repository::open(".").unwrap_or_else(|_| {
