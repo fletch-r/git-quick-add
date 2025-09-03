@@ -1,6 +1,6 @@
 [package]
 name = "git-quick-add"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 authors = ["Andrew Fletcher"]
 description = "Quickly add your files with the command `qa` using the interactive terminal."
