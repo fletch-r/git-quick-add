@@ -103,7 +103,7 @@ pub fn choose_files(path_items: Vec<PathItems>) -> Vec<PathItems> {
             eprintln!("{}", console::style("Error selecting files").red());
             process::exit(1)
         });
-
+    // Might not need to di this anymore
     let mut paths: Vec<PathItems> = path_items.clone();
 
     for index in selections {
@@ -142,7 +142,7 @@ pub fn git_add_selected(repo: &Repository, paths: &Vec<PathItems>) -> Result<(),
 
             index.add_path(p).unwrap_or_else(|e| {
                 eprintln!("{}", e);
-                process::exit(1)
+                process::exit(1) // If something fails. It probably doesnt need to exit
             });
 
             logs.push(format!(
@@ -153,7 +153,7 @@ pub fn git_add_selected(repo: &Repository, paths: &Vec<PathItems>) -> Result<(),
 
             index.write().unwrap_or_else(|_| {
                 println!("{}", console::style("Failed to write index").red());
-                process::exit(1)
+                process::exit(1) // Same as above here
             });
         } else {
             if item.is_staged {
