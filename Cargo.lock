@@ -115,7 +115,7 @@ dependencies = [
 
 [[package]]
 name = "git-quick-add"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "console",
  "dialoguer",
