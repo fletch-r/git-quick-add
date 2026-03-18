@@ -1,6 +1,7 @@
 use git_quick_add::{choose_files, get_paths, git_add_selected};
 use git2::Repository;
 use std::process;
+use git_quick_add::git::commit;
 
 fn main() {
     let repo = Repository::open(".").unwrap_or_else(|_| {
@@ -19,4 +20,6 @@ fn main() {
         eprintln!("{}", console::style("Failed to stage files").red());
         process::exit(1)
     });
+
+    commit(&repo);
 }

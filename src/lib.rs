@@ -1,9 +1,11 @@
 pub mod git {
     mod stage;
     mod status;
+    mod commit;
 
     pub use stage::git_add_selected;
     pub use status::get_paths;
+    pub use commit::commit;
 }
 
 pub mod models {

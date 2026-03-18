@@ -18,6 +18,11 @@ pub fn get_paths(repo: &Repository) -> Result<Vec<PathItems>, git2::Error> {
             continue;
         }
 
+        // Skip swap files (e.g., Vim creates .swp files that we don't want to show)
+        if diff_entry.path().unwrap().ends_with(".swp") {
+            continue;
+        }
+
         let path_items = diff_entry
             // 1. Try to get the HEAD → index diff
             .head_to_index()
