@@ -17,9 +17,10 @@ pub fn commit(repo: &Repository) {
         .ok()
         .and_then(|head| head.shorthand().map(str::to_owned))
         .unwrap_or_else(|| "HEAD".to_string());
-    let reference_id = Regex::new(r"(?!.*\/)([^\d]*)(\d+)")
+    let branch_segment = branch_name.rsplit('/').next().unwrap_or(&branch_name);
+    let reference_id = Regex::new(r"^([^\d]*)(\d+)")
         .unwrap()
-        .captures(&branch_name)
+        .captures(branch_segment)
         .map(|captures| format!("{}{}", &captures[1], &captures[2]))
         .unwrap_or(branch_name);
     // 3: Create the commit
@@ -35,7 +36,7 @@ pub fn commit(repo: &Repository) {
         .and_then(|head| head.target())
         .and_then(|oid| repo.find_commit(oid).ok());
     let parents = parent_commit.iter().collect::<Vec<_>>();
-    let commit_buffer = repo
+    let commit_result = repo
         .commit_create_buffer(
             &signature,
             &signature,
@@ -43,14 +44,34 @@ pub fn commit(repo: &Repository) {
             &tree,
             &parents,
         )
-        .unwrap();
-    let commit_content = str::from_utf8(&commit_buffer).unwrap();
-    let signed_commit = sign_commit_buffer(repo, commit_content).unwrap();
+        .ok()
+        .and_then(|commit_buffer| {
+            let commit_content = str::from_utf8(&commit_buffer).ok()?;
+            let signed_commit = sign_commit_buffer(repo, commit_content).ok()?;
+            repo.commit_signed(commit_content, &signed_commit, None).ok()
+        });
 
-    repo.commit_signed(commit_content, &signed_commit, None)
+    if commit_result.is_some() {
+        println!(
+            "{}",
+            console::style("Signed commit created successfully").green()
+        );
+    } else {
+        repo.commit(
+            Some("HEAD"),
+            &signature,
+            &signature,
+            &full_commit_message,
+            &tree,
+            &parents,
+        )
         .unwrap();
-    // 4: Print commit for review
-    println!("{}", console::style("Commit created successfully").green());
+        println!(
+            "{}",
+            console::style("Commit created successfully (unsigned)").yellow()
+        );
+    }
+
     println!("Commit message: {full_commit_message}");
     // 5: Optional push
 }
