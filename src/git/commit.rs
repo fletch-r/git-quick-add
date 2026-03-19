@@ -48,7 +48,9 @@ pub fn commit(repo: &Repository) {
         .and_then(|commit_buffer| {
             let commit_content = str::from_utf8(&commit_buffer).ok()?;
             let signed_commit = sign_commit_buffer(repo, commit_content).ok()?;
-            repo.commit_signed(commit_content, &signed_commit, None).ok()
+            let commit_oid = repo.commit_signed(commit_content, &signed_commit, None).ok()?;
+            update_head_to_commit(repo, commit_oid, &full_commit_message).ok()?;
+            Some(commit_oid)
         });
 
     if commit_result.is_some() {
@@ -121,4 +123,20 @@ fn sign_commit_buffer(repo: &Repository, commit_content: &str) -> Result<String,
 
     String::from_utf8(output.stdout)
         .map_err(|err| git2::Error::from_str(&format!("invalid gpg output: {err}")))
+}
+
+fn update_head_to_commit(
+    repo: &Repository,
+    commit_oid: git2::Oid,
+    reflog_message: &str,
+) -> Result<(), git2::Error> {
+    let head = repo.head()?;
+
+    match head.resolve() {
+        Ok(mut direct_ref) => {
+            direct_ref.set_target(commit_oid, reflog_message)?;
+            Ok(())
+        }
+        Err(_) => repo.set_head_detached(commit_oid),
+    }
 }
