@@ -1,3 +1,5 @@
+pub mod config;
+
 pub mod git {
     mod stage;
     mod status;

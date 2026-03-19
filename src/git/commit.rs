@@ -1,10 +1,11 @@
 use dialoguer::Input;
 use git2::Repository;
 use regex::Regex;
+use crate::config::AppConfig;
 use std::process::{Command, Stdio};
 use std::str;
 
-pub fn commit(repo: &Repository) {
+pub fn commit(repo: &Repository, config: AppConfig) {
     // 0: We have our staged changes
     // 1: Prompt the user for a commit message
     let commit_message: String = Input::new()
@@ -21,7 +22,7 @@ pub fn commit(repo: &Repository) {
     let reference_id = Regex::new(r"^([^\d]*)(\d+)")
         .unwrap()
         .captures(branch_segment)
-        .map(|captures| format!("{}{}", &captures[1], &captures[2]))
+        .map(|captures| format_reference_id(&captures[1], &captures[2], config.uppercase))
         .unwrap_or(branch_name);
     // 3: Create the commit
     // git commit -S -m "{reference_id}: {commit_message}"
@@ -76,6 +77,15 @@ pub fn commit(repo: &Repository) {
 
     println!("Commit message: {full_commit_message}");
     // 5: Optional push
+}
+
+fn format_reference_id(prefix: &str, number: &str, uppercase: bool) -> String {
+    let reference_id = format!("{prefix}{number}");
+    if uppercase {
+        reference_id.to_uppercase()
+    } else {
+        reference_id
+    }
 }
 
 fn sign_commit_buffer(repo: &Repository, commit_content: &str) -> Result<String, git2::Error> {
@@ -138,5 +148,20 @@ fn update_head_to_commit(
             Ok(())
         }
         Err(_) => repo.set_head_detached(commit_oid),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::format_reference_id;
+
+    #[test]
+    fn leaves_reference_id_unchanged_by_default() {
+        assert_eq!(format_reference_id("abc-", "123", false), "abc-123");
+    }
+
+    #[test]
+    fn uppercases_reference_id_when_enabled() {
+        assert_eq!(format_reference_id("abc-", "123", true), "ABC-123");
     }
 }
